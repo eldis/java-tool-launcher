@@ -1,12 +1,29 @@
 inThisBuild(List(
+  // Project metadata
   organization := "com.github.eldis",
   organizationHomepage := url("http://eldis.ru").some,
   homepage := url("https://github.com/eldis/java-tool-launcher").some,
-  description := "Java application/ToolProvider launcher with @argfile support",
+  licenses := Vector("MIT" -> url("http://opensource.org/licenses/MIT")),
+  scmInfo := ScmInfo(
+    url("https://github.com/eldis/java-tool-launcher"),
+    "scm:git@github.com:eldis/java-tool-launcher.git"
+  ).some,
   startYear := 2019.some,
 
+  // Common Scala setup and tooling
   scalaVersion := "2.13.1",
-  scalafmtOnCompile := true
+  scalafmtOnCompile := true,
+
+  // Publishing settings
+  credentials += Credentials(Path.userHome / ".sbt" / "sonatype_credential"),
+  publishTo := {
+    val nexus = "https://oss.sonatype.org/"
+    if (isSnapshot.value)
+      Some("snapshots" at nexus + "content/repositories/snapshots")
+    else
+      Some("releases"  at nexus + "service/local/staging/deploy/maven2")
+  },
+  publishMavenStyle := true
 ))
 
 // Set up the root project
@@ -15,6 +32,7 @@ publish / skip := true
 
 val core = project.settings(
   name := "tool-launcher",
+  description := "Java application/ToolProvider launcher with @argfile support",
 
   // We want the resulting JAR to be self-contained, and not interacting with
   // any other dependencies - so write it in raw Java.
@@ -27,16 +45,6 @@ val core = project.settings(
     "-Xlint:all"
   ),
   doc / javacOptions := List("--release", "11"),
-
-  // Set up publishing.
-  publishMavenStyle := true,
-  publishTo := {
-    val nexus = "https://oss.sonatype.org/"
-    if (isSnapshot.value)
-      Some("snapshots" at nexus + "content/repositories/snapshots")
-    else
-      Some("releases"  at nexus + "service/local/staging/deploy/maven2")
-  }
 )
 
 // Tests need to be in a separate subproject, since we want to be able to use Scala.
