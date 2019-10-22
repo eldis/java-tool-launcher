@@ -1,13 +1,13 @@
-inScope(ThisBuild)(
+inThisBuild(List(
   organization := "com.github.eldis",
-  organizationHomepage := "http://eldis.ru",
-  homepage := "https://github.com/eldis/java-tool-launcher",
+  organizationHomepage := url("http://eldis.ru").some,
+  homepage := url("https://github.com/eldis/java-tool-launcher").some,
   description := "Java application/ToolProvider launcher with @argfile support",
-  startYear := "2019",
+  startYear := 2019.some,
 
   scalaVersion := "2.13.1",
   scalafmtOnCompile := true
-)
+))
 
 // Set up the root project
 name := "root"
