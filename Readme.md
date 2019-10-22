@@ -1,5 +1,8 @@
 # Java tool launcher
 
+![Travis (.com)](https://img.shields.io/travis/com/eldis/java-tool-launcher)
+![Sonatype Nexus (Releases)](https://img.shields.io/nexus/r/com.github.eldis/tool-launcher?server=https%3A%2F%2Foss.sonatype.org)
+
 A self-contained launcher for Java applications, providing `@argfile` support.
 
 ## Motivation
