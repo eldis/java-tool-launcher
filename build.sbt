@@ -9,6 +9,12 @@ inThisBuild(List(
     "scm:git@github.com:eldis/java-tool-launcher.git"
   ).some,
   startYear := 2019.some,
+  developers += Developer(
+    id = "nigredo-tori",
+    name = "Dmitry Polienko",
+    email = "dmitry@eldis.ru",
+    url = url("https://github.com/nigredo-tori")
+  ),
 
   // Common Scala setup and tooling
   scalaVersion := "2.13.1",
