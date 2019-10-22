@@ -1,0 +1,20 @@
+language: scala
+
+jdk: openjdk11
+
+scala: 2.13.1
+
+script:
+  - sbt test
+
+before_cache:
+  # Tricks to avoid unnecessary cache updates
+  - find $HOME/.sbt -name "*.lock" | xargs rm
+  - find $HOME/.ivy2 -name "ivydata-*.properties" | xargs rm
+  - rm -f $HOME/.ivy2/.sbt.ivy.lock
+
+cache:
+  directories:
+    - $HOME/.cache/coursier
+    - $HOME/.ivy2/cache
+    - $HOME/.sbt/boot/
