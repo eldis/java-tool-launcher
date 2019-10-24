@@ -1,4 +1,4 @@
-package ru.eldis;
+package ru.eldis.toollauncher;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
