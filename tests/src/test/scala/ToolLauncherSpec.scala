@@ -1,4 +1,4 @@
-package ru.eldis
+package ru.eldis.toollauncher
 
 import java.nio.file.Files
 import scala.jdk.CollectionConverters._
