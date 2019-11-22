@@ -2,7 +2,7 @@ package ru.eldis.toollauncher
 
 import java.nio.file.Files
 import scala.jdk.CollectionConverters._
-import scala.sys.process.Process
+import scala.sys.process.{Process, ProcessBuilder}
 
 import org.specs2.mutable.Specification
 import org.specs2.matcher.NoTypedEqual
@@ -38,7 +38,6 @@ class ToolLauncherSpec extends Specification with NoTypedEqual {
       } finally {
         Files.delete(file)
       }
-
     }
     "pass escaped arguments to the application" in {
       runEcho(Vector("\\@foo")) must_=== Vector("@foo")
@@ -54,6 +53,19 @@ class ToolLauncherSpec extends Specification with NoTypedEqual {
 
       viaLauncher must_=== directly
     }
+    "fail if the tool fails" in {
+      val exitCode = toolLauncherProcess(
+        Vector("-tool", "jlink", "-invalidargument")
+      ).!
+
+      exitCode must_!== 0
+    }
+    "fail if the tool doesn't exist" in {
+      val exitCode =
+        toolLauncherProcess(Vector("-tool", "nosuchtool")).!
+
+      exitCode must_!== 0
+    }
   }
 
   // Run the echo application, returning the arguments it received.
@@ -63,7 +75,10 @@ class ToolLauncherSpec extends Specification with NoTypedEqual {
     ).linesIterator.toVector
 
   // Run `ToolLauncher` with the provided arguments, returning its stdout.
-  def runToolLauncher(args: Vector[String]): String = {
+  def runToolLauncher(args: Vector[String]): String =
+    toolLauncherProcess(args).!!
+
+  def toolLauncherProcess(args: Vector[String]): ProcessBuilder = {
     // Use the current classpath
     val classPath = sys.props.getOrElse(
       "java.class.path",
@@ -76,7 +91,7 @@ class ToolLauncherSpec extends Specification with NoTypedEqual {
       classOf[ToolLauncher].getName
     ) ++ args
 
-    Process(command).!!
+    Process(command)
   }
 
   def jdkExecutable(name: String): String = {
