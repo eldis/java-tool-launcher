@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.stream.Stream;
-import java.util.function.Consumer;
+import java.util.function.ToIntFunction;
 import java.util.spi.ToolProvider;
 
 public final class ToolLauncher {
@@ -24,7 +24,7 @@ public final class ToolLauncher {
       return;
     }
 
-    Consumer<String[]> impl;
+    ToIntFunction<String[]> impl;
     switch (args[0]) {
       case "-main":
         impl = expandedArgs -> runMain(args[1], expandedArgs);
@@ -44,23 +44,26 @@ public final class ToolLauncher {
             .skip(2)
             .flatMap(ToolLauncher::expandArgument)
             .toArray(String[]::new);
-    impl.accept(expandedArgs);
+
+    int exitCode = impl.applyAsInt(expandedArgs);
+    System.exit(exitCode);
   }
 
-  private static void runMain(String className, String[] args) {
+  private static int runMain(String className, String[] args) {
     try {
       Arrays.stream(Class.forName(className).getMethods())
           .filter(ToolLauncher::isMainMethod)
           .findAny()
           .orElseThrow(() -> new IllegalArgumentException("Class does not have a main method"))
           .invoke(null, new Object[] {args});
+      return 0;
     } catch (ReflectiveOperationException e) {
       throw new RuntimeException(e);
     }
   }
 
-  private static void runTool(String toolName, String[] args) {
-    ToolProvider.findFirst(toolName)
+  private static int runTool(String toolName, String[] args) {
+    return ToolProvider.findFirst(toolName)
         .orElseThrow(() -> new IllegalArgumentException("Tool not found"))
         .run(System.out, System.err, args);
   }
